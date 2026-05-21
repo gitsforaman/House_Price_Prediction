@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>AI Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+
+/* BACKGROUND */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top, #1e1b4b, #0b1220);
+    color: white;
+}
+
+/* MAIN GRID */
+.dashboard {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 15% 42% 43%;
+    gap: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* TOP PRICE */
+.top {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255,255,255,0.06);
+    border-radius: 14px;
+}
+
+.price {
+    font-size: 30px;
+    color: #22c55e;
+    font-weight: bold;
+}
+
+/* MIDDLE GRID (CHARTS) */
+.middle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* BOX STYLE */
+.box {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* TITLES */
+h3 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+/* CANVAS FIX */
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* BOTTOM MAP */
+.bottom {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#map {
+    flex: 1;
+    width: 100%;
+    border-radius: 12px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- TOP PRICE -->
+    <div class="top">
+        <div>Estimated Price</div>
+        <div class="price">₹ {{price}} Lakh</div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="middle">
+
+        <div class="box">
+            <h3>City Price Comparison</h3>
+            <canvas id="bar"></canvas>
+        </div>
+
+        <div class="box">
+            <h3>Market Trend Graph</h3>
+            <canvas id="line"></canvas>
+        </div>
+
+    </div>
+
+    <!-- MAP -->
+    <div class="bottom">
+        <h3>City Heat Map</h3>
+        <div id="map"></div>
+    </div>
+
+</div>
+
+<script>
+
+const cities = JSON.parse('{{ cities | safe }}');
+const prices = JSON.parse('{{ prices | safe }}');
+
+/* BAR CHART */
+new Chart(document.getElementById("bar"), {
+    type: "bar",
+    data: {
+        labels: cities,
+        datasets: [{
+            data: prices,
+            backgroundColor: "#6366f1",
+            borderRadius: 6
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        animation: { duration: 900 }
+    }
+});
+
+/* LINE CHART */
+new Chart(document.getElementById("line"), {
+    type: "line",
+    data: {
+        labels: ["2021","2022","2023","2024","2025","2026"],
+        datasets: [{
+            data: prices.map(p => p / 4),
+            borderColor: "#22c55e",
+            backgroundColor: "rgba(34,197,94,0.1)",
+            fill: true,
+            tension: 0.4,
+            pointRadius: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        animation: { duration: 900 }
+    }
+});
+
+/* MAP */
+setTimeout(() => {
+
+const cityCoords = {
+    "Delhi":[28.61,77.20],
+    "Mumbai":[19.07,72.87],
+    "Lucknow":[26.84,80.94],
+    "Noida":[28.53,77.39],
+    "Bangalore":[12.97,77.59],
+    "Pune":[18.52,73.85]
+};
+
+const map = L.map('map').setView([22.9734, 78.6569], 5);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: ''
+}).addTo(map);
+
+cities.forEach((city, i) => {
+
+    let c = cityCoords[city];
+
+    if (c) {
+        L.circle(c, {
+            color: "#22c55e",
+            fillColor: "#22c55e",
+            fillOpacity: prices[i] / 200,
+            radius: 45000
+        }).addTo(map)
+        .bindPopup(city + " : ₹ " + prices[i] + " Lakh");
+    }
+
+});
+
+setTimeout(() => map.invalidateSize(), 200);
+
+}, 300);
+
+</script>
+
+</body>
+</html>

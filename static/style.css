@@ -1,0 +1,104 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    border:5px solid red;
+}
+
+body{
+    background:#020617;
+    color:white;
+    font-family:Arial;
+    height:100vh;
+    overflow:hidden; /* NO SCROLL */
+}
+
+/* MAIN LAYOUT */
+.main-container{
+    display:grid;
+    grid-template-columns: 320px 1fr;
+    gap:12px;
+    height:100vh;
+    padding:10px;
+}
+
+/* LEFT FORM */
+.card{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:15px;
+    padding:12px;
+}
+
+/* RIGHT DASHBOARD */
+.dashboard{
+    display:grid;
+    grid-template-rows: 1fr 1fr;
+    gap:10px;
+    height:100%;
+}
+
+/* CHART CARDS */
+.chart-card{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:15px;
+    padding:10px;
+}
+
+/* INPUTS */
+input, select{
+    width:100%;
+    padding:8px;
+    margin-top:6px;
+    margin-bottom:10px;
+    border:none;
+    border-radius:8px;
+    background:#0f172a;
+    color:white;
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(45deg,#2563eb,#7c3aed);
+    color:white;
+    font-size:13px;
+    cursor:pointer;
+}
+
+button:hover{
+    transform:scale(1.02);
+}
+
+/* HEADINGS */
+h1{
+    font-size:16px;
+    text-align:center;
+    margin-bottom:10px;
+}
+
+h2{
+    font-size:14px;
+    text-align:center;
+}
+
+/* RESULT */
+.result-box{
+    margin-top:8px;
+    text-align:center;
+    font-size:13px;
+}
+
+/* CHART SIZE FIX */
+canvas{
+    height:170px !important;
+}
